@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" @click="showDetail">
     <div class="content-wrapper">
       <div class="avatar">
         <img width="64" height="64" :src="seller.avatar">
@@ -46,6 +46,16 @@
       }
     },
     methods: {
+      showDetail() {
+        console.log(this.headerDetailComp)
+        this.headerDetailComp = this.headerDetailComp || this.$createHeaderDetail({
+          $props: {
+            seller: 'seller'
+          }
+        })
+        this.headerDetailComp.show()
+      }
+
     },
     components: {
       SupportIco
@@ -60,7 +70,7 @@
   .header
     position: relative
     overflow: hidden
-    color: $color-white
+    color: $color-white/*一直有个问题，less和sass也有类似的语法，这种语法有什么好处？看似代码命名更多了？？*/
     background: $color-background-ss
     .content-wrapper
       position: relative
@@ -82,7 +92,7 @@
           .brand
             width: 30px
             height: 18px
-            bg-image('brand')
+            bg-image('./brand')/*这是cube-ui样式的语法*/
             background-size: 30px 18px
             background-repeat: no-repeat
           .name
@@ -115,7 +125,7 @@
         border-radius: 14px
         background: $color-background-sss
         .count
-          font-size: $fontsize-small-s
+          font-size: $fontsize-small-s /*代表10px*/
         .icon-keyboard_arrow_right
           margin-left: 2px
           line-height: 24px
