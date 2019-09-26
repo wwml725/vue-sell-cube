@@ -1,4 +1,5 @@
 <template>
+  <!--星星组件，用来评价几星-->
   <div class="star" :class="starType">
     <span v-for="(itemClass,index) in itemClasses" :class="itemClass" class="star-item" :key="index"></span>
   </div>

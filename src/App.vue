@@ -9,6 +9,7 @@
 
 <script>
   import VHeader from 'components/v-header/v-header'
+  //获取卖家信息的接口
   import { getSeller } from 'api'
   import Tab from 'components/tab/tab'
   import Goods from 'components/goods/goods'
@@ -55,6 +56,7 @@
       this._getSeller()
     },
     methods: {
+      //获取卖家信息
       _getSeller () {
         getSeller().then((seller)=>{
           this.seller = seller

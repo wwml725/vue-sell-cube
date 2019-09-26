@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!--评价组件-->
+
     rating
   </div>
 </template>

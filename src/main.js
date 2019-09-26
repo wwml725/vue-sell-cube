@@ -5,7 +5,6 @@ import './register'
 
 import 'common/stylus/index.styl'
 
-
 Vue.config.productionTip = false
 
 new Vue({

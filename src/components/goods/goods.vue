@@ -1,5 +1,6 @@
 <template>
   <div class="goods">
+    <!--商品组件 -->
    goods
   </div>
 </template>

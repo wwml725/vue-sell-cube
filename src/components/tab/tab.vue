@@ -55,7 +55,6 @@
           directionLockThreshold: 0
         }
       }
-
     },
     computed: {
       selectedLabel: {

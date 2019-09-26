@@ -1,5 +1,6 @@
 <template>
     <div class="seller">
+      <!--商家组件-->
       商家
     </div>
 </template>
