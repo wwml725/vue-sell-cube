@@ -69,7 +69,7 @@
       }
     },
     mounted () {
-      // this.onChange(this.index)
+      this.onChange(this.index)
     },
     methods: {
       onScroll(pos) {
@@ -81,6 +81,10 @@
       onChange(current) {
         this.index = current
         console.log(this.$refs);
+        const instance = this.$refs.component[current]
+        if (instance && instance.fetch) {
+          instance.fetch()
+        }
       }
 
     },
