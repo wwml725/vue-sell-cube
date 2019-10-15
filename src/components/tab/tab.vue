@@ -8,7 +8,13 @@
       ref="tabBar"
       class="border-bottom-1px"
     >
+      <!--
+        :useTransition=false  ：  下面的下划线是否需要过度
+        :showSlider=true    ：  是否需要下划线
+      -->
+
     </cube-tab-bar>
+
     <div class="slide-wrapper">
       <cube-slide
         :loop="false"
@@ -20,7 +26,8 @@
         @scroll="onScroll"
         ref="slide">
         <cube-slide-item v-for="(tab,index) in tabs" :key="index">
-          <component ref="component" :is="tab.component" :data="tab.data"></component>
+          <!--<component ref="component" :is="tab.component" :data="tab.data"></component>-->
+          <component ref="component" :is="tab.component"></component>
         </cube-slide-item>
       </cube-slide>
     </div>
@@ -28,9 +35,6 @@
 </template>
 
 <script>
-  // import Goods from 'components/goods/goods'
-  // import Ratings from 'components/ratings/ratings'
-  // import Seller from 'components/seller/seller'
 
   export default {
     name: 'tab',
@@ -80,16 +84,15 @@
       },
       onChange(current) {
         this.index = current
-        console.log(this.$refs);
+        // console.log(this.$refs);
         const instance = this.$refs.component[current]
         if (instance && instance.fetch) {
           instance.fetch()
         }
       }
-
     },
     components: {
-      // Goods, Ratings, Seller
+
     }
   }
 </script>

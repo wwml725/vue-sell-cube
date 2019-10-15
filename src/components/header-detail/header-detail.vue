@@ -1,4 +1,5 @@
 <template>
+  <!--这个组件是由register文件引入的，通过main引入了app组建中-->
   <transition name="fade">
     <!--<div v-show="visible" class="header-detail" @touchmove.stop.prevent>-->
     <div v-show="visible" class="header-detail">

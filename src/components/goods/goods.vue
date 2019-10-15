@@ -7,6 +7,29 @@
         :options="scrollOptions"
         v-if="goods.length"
       >
+        <template slot="bar" slot-scope="props">
+          <cube-scroll-nav-bar
+            direction="vertical"
+            :labels="props.labels"
+            :txts="barTxts"
+            :current="props.current"
+          >
+            <template slot-scope="props">
+              <div class="text">
+                <support-ico
+                  v-if="props.txt.type>=1"
+                  :size=3
+                  :type="props.txt.type"
+                ></support-ico>
+                <span>{{props.txt.name}}</span>
+                <span class="num" v-if="props.txt.count">
+                  <bubble :num="props.txt.count"></bubble>
+                </span>
+              </div>
+            </template>
+          </cube-scroll-nav-bar>
+        </template>
+
         <cube-scroll-nav-panel
           v-for="good in goods"
           :key="good.name"
@@ -33,17 +56,35 @@
                   <span class="now">￥{{food.price}}</span>
                   <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                 </div>
+                <div class="cart-control-wrapper">
+                  <cart-control @add="onAdd" :food="food"></cart-control>
+                </div>
+
               </div>
             </li>
           </ul>
         </cube-scroll-nav-panel>
       </cube-scroll-nav>
     </div>
+    <div class="shop-cart-wrapper">
+      <shop-cart
+        ref="shopCart"
+      >
+
+      </shop-cart>
+
+    </div>
   </div>
 </template>
 
 <script>
-  import { getGoods } from 'api'
+  import {getGoods} from 'api'
+  import ShopCart from 'components/shop-cart/shop-cart'
+  import CartControl from 'components/cart-control/cart-control'
+
+  import SupportIco from 'components/support-ico/support-ico'
+  import Bubble from 'components/bubble/bubble'
+
 
   export default {
     name: 'goods',
@@ -57,22 +98,54 @@
     },
     data() {
       return {
-        goods:[],
-        scrollOptions:{
-          click:false,
-          directionLockThreshold:0
-        }
+        goods: [],
+        scrollOptions: {
+          click: false,
+          directionLockThreshold: 0
+        },
+        selectedFood: {},
       }
     },
-    computed: {},
-    methods: {
-      fetch(){
-        getGoods().then((goods)=>{
-           this.goods = goods
+    computed: {
+      seller() {
+        return this.data.seller
+      },
+      barTxts() {
+        let ret = []
+        this.goods.forEach((good) => {
+          const {type, name, foods} = good
+          let count = 0
+          foods.forEach((food) => {
+            count += food.count || 0
+          })
+          ret.push({
+            type,
+            name,
+            count
+          })
         })
+        return ret
       }
+
     },
-    components: {}
+    methods: {
+      fetch() {
+        //获取商品信息
+        getGoods().then((goods) => {
+          this.goods = goods
+        })
+      },
+      onAdd(target) {
+        // console.log("onAdd");
+        this.$refs.shopCart.drop(target)//驱动shop-cart组件中的小球下坠动画
+      },
+    },
+    components: {
+      Bubble,
+      SupportIco,
+      ShopCart,
+      CartControl
+    }
   }
 </script>
 

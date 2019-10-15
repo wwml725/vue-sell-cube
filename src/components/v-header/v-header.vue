@@ -51,7 +51,7 @@
       showDetail() {
         //调用这个函数，调用详情组件，并且传入卖家信息，显示这个组件
         console.log(this.headerDetailComp)
-      this.headerDetailComp = this.headerDetailComp || this.$createHeaderDetail({
+        this.headerDetailComp = this.headerDetailComp || this.$createHeaderDetail({
           $props: {
             seller: 'seller'
           }
