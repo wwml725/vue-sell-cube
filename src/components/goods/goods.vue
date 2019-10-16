@@ -69,6 +69,8 @@
     <div class="shop-cart-wrapper">
       <shop-cart
         ref="shopCart"
+        :select-foods="selectFoods"
+
       >
 
       </shop-cart>
@@ -79,9 +81,9 @@
 
 <script>
   import {getGoods} from 'api'
+  //引入的子组件
   import ShopCart from 'components/shop-cart/shop-cart'
   import CartControl from 'components/cart-control/cart-control'
-
   import SupportIco from 'components/support-ico/support-ico'
   import Bubble from 'components/bubble/bubble'
 
@@ -89,12 +91,12 @@
   export default {
     name: 'goods',
     props: {
-      data: {
-        type: Object,
-        default() {
-          return {}
-        }
-      }
+      // data: {
+      //   type: Object,
+      //   default() {
+      //     return {}
+      //   }
+      // }
     },
     data() {
       return {
@@ -107,9 +109,10 @@
       }
     },
     computed: {
-      seller() {
-        return this.data.seller
-      },
+      // seller() {
+      //   return this.data.seller
+      // },
+      //保存了食品种类名称和数量以及type（type是给support-icon使用的）
       barTxts() {
         let ret = []
         this.goods.forEach((good) => {
@@ -125,12 +128,26 @@
           })
         })
         return ret
-      }
+      },
 
+      //被添加值购物车的食品信息
+      //selectFoods就是：食品信息中count>0,将食品放进这个对象中、
+      //将这个数据，放到购物车组件的中的购物车组件，在组建中获取食品数量
+      selectFoods() {
+        let foods = []
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count) {
+              foods.push(food)
+            }
+          })
+        })
+        return foods
+      },
     },
     methods: {
       fetch() {
-        //获取商品信息
+        //获取商品信息，在这里获取商品信息，然后从这里传送给这里的子组件
         getGoods().then((goods) => {
           this.goods = goods
         })

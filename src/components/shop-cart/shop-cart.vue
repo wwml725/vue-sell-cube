@@ -1,6 +1,6 @@
 <template>
     <div class="shopcart">
-      <div class="content" >
+      <div class="content" @click="toggleList" >
         <div class="content-left">
           <div class="logo-wrapper">
             <div class="logo" :class="{'highlight':totalCount>0}">
@@ -128,20 +128,6 @@
       }
     },
     methods: {
-     /* toggleList() {
-        if (this.listFold) {
-          if (!this.totalCount) {
-            return
-          }
-          this.listFold = false
-          this._showShopCartList()
-          this._showShopCartSticky()
-        } else {
-          this.listFold = true
-          this._hideShopCartList()
-        }
-      },*/
-
       // pay(e) {
       //   if (this.totalPrice < this.minPrice) {
       //     return
@@ -209,7 +195,24 @@
         }
       },
 
+      //点击content，显示购物列表，
+      toggleList() {
+        //也可以在这里创建一个标识，控制是否执行下面的代码
+        if (this.listFold) {//如果this.listFold为true，执行下面代码,也就是说true触发这个事件，false不触发这个事件
+          if (!this.totalCount) {
+            return
+          }
+          this.listFold = false//
+          this._showShopCartList()//调用shop-cart-list组件列表
+          // this._showShopCartSticky()
+        } else {
+          this.listFold = true
+          this._hideShopCartList()
+        }
+      },
+
       //通过register控制组件是否显示（是否加载），register这个文件的语法是cube-ui特有的，后续一定要搞明白了
+      //显示购物车列表，组件
       _showShopCartList() {
         this.shopCartListComp = this.shopCartListComp || this.$createShopCartList({
           $props: {
@@ -217,37 +220,42 @@
           },
           $events: {
             leave: () => {
-              this._hideShopCartSticky()
+              // this._hideShopCartSticky()
             },
             hide: () => {
-              this.listFold = true
+              this.listFold = true//通过组件的隐藏事件更改这个值为初始值，这样才可以重新触发点击事件
             },
             add: (el) => {
-              this.shopCartStickyComp.drop(el)
+              // this.shopCartStickyComp.drop(el)
             }
           }
-        })
+        });
         this.shopCartListComp.show()
       },
-      _showShopCartSticky() {
-        this.shopCartStickyComp = this.shopCartStickyComp || this.$createShopCartSticky({
-          $props: {
-            selectFoods: 'selectFoods',
-            deliveryPrice: 'deliveryPrice',
-            minPrice: 'minPrice',
-            fold: 'listFold',
-            list: this.shopCartListComp
-          }
-        })
-        this.shopCartStickyComp.show()
-      },
+
       _hideShopCartList() {
-        const list = this.sticky ? this.$parent.list : this.shopCartListComp
-        list.hide && list.hide()
+        // const list = this.sticky ? this.$parent.list : this.shopCartListComp
+        // list.hide && list.hide()
+
+        this.shopCartListComp.hide()
+
       },
-      _hideShopCartSticky() {
-        this.shopCartStickyComp.hide()
-      }
+
+      // _showShopCartSticky() {
+      //   this.shopCartStickyComp = this.shopCartStickyComp || this.$createShopCartSticky({
+      //     $props: {
+      //       selectFoods: 'selectFoods',
+      //       deliveryPrice: 'deliveryPrice',
+      //       minPrice: 'minPrice',
+      //       fold: 'listFold',
+      //       list: this.shopCartListComp
+      //     }
+      //   })
+      //   this.shopCartStickyComp.show()
+      // },
+      // _hideShopCartSticky() {
+      //   this.shopCartStickyComp.hide()
+      // }
     },
     watch: {
       // fold(newVal) {

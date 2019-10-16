@@ -21,9 +21,7 @@
   export default {
     data () {
       return {
-        seller: {
-
-        }
+        seller: {}
       }
     },
     computed: {
@@ -46,9 +44,9 @@
           {
             label: '商家uuuu',
             component: Seller,
-            data: {
-              seller: this.seller
-            }
+            // data: {
+            //   seller: this.seller
+            // }
           }
         ]
       }
