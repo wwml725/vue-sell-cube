@@ -70,11 +70,8 @@
       <shop-cart
         ref="shopCart"
         :select-foods="selectFoods"
-
-      >
-
-      </shop-cart>
-
+        :delivery-price="seller.deliveryPrice"
+        :min-price="seller.minPrice"></shop-cart>
     </div>
   </div>
 </template>
@@ -91,12 +88,12 @@
   export default {
     name: 'goods',
     props: {
-      // data: {
-      //   type: Object,
-      //   default() {
-      //     return {}
-      //   }
-      // }
+      data: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
     },
     data() {
       return {
@@ -109,9 +106,9 @@
       }
     },
     computed: {
-      // seller() {
-      //   return this.data.seller
-      // },
+      seller() {
+        return this.data.seller
+      },
       //保存了食品种类名称和数量以及type（type是给support-icon使用的）
       barTxts() {
         let ret = []
