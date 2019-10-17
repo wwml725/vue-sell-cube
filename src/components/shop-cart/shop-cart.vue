@@ -11,7 +11,7 @@
             </div>
           </div>
           <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
-          <div class="desc">另需配送费￥{{deliveryPrice}}元</div>
+          <p class="desc">另需配送费￥{{deliveryPrice}}元</p>
         </div>
         <div class="content-right">
           <div class="pay" :class="payClass">
@@ -74,21 +74,21 @@
         type: Boolean,
         default: false
       },
-      fold: {
+      fold: {//用来控制是否显示cart-list组件
         type: Boolean,
-        default: true
+        default: false
       }
     },
     data() {
       return {
         balls: createBalls(),//保存一系列小球的显示隐藏标识 将小球定位到下面购物车图片的位置
         listFold: this.fold,//控制购物车列表是否显示？？？？？？？？？？。
-        dropBalls :[]//用来保存正在下坠的小球，小球的效果是点击下坠，到一定位置后，消失
+        // dropBalls :[]//用来保存正在下坠的小球，小球的效果是点击下坠，到一定位置后，消失
       }
     },
     created() {
-      //dropBalls是什么？？
-      // this.dropBalls = []
+      //dropBalls是什么？？//用来保存正在下坠的小球，小球的效果是点击下坠，到一定位置后，消失
+      this.dropBalls = []//因为这个属性不需要加入响应是系统，所以不用放到data中
     },
     computed: {
       //总价格
@@ -141,15 +141,14 @@
 
       //小球的动画效果,动画时间是怎么控制的
       drop(el) {//el代表点击的dom元素，在函数执行的时候传参数
-        console.log(el);
+        // console.log(el);
         //点击按钮显示小球
         for (let i = 0; i < this.balls.length; i++) {
-          console.log(i);
           const ball = this.balls[i]//依次获取小球中的{show：false}
           if (!ball.show) {//如果show是false，执行下面代码，如果是true就不执行下面代码，根据for循环，找到下一个索引i+1对应的数据，如果所有的数据都是true，就不执行，注意每一次点击都会从第一个数据来判断，0,1,2,3,4...
             ball.show = true //
             ball.el = el//依次将点击的dom元素放进小球
-            console.log(ball);//ball中保存的是对象的引用地址，这样就代表下面
+            // console.log(ball);//ball中保存的是对象的引用地址，这样就代表下面
             //创建一个中间层数组（在created(){}，之所以不放入data中，是因为他不需要响应式的，问题：如果放入data中会有什么不好的影响？耗费性能？这不废话吗？还有什么，详细点？）,将小球复制放到这里面，
             //注意：自始至终都只有那10个或者n个小球，不存在复制问题，只是把下坠的小球的引用地址放到了dropBalls数组中，目的是方便操作，区分下坠和不下坠的小球集合
             this.dropBalls.push(ball)//这些小球的生命周期就是：显示--下坠--消失
@@ -161,7 +160,7 @@
 
       beforeDrop(el) {
         //找到动画元素，也就是小球的“动画起始位置”
-        console.log("beforeDrop");
+        // console.log("beforeDrop");
         //为什么选择最后一个，因为点击的添加按钮不止一个，ball除了包含show之外，还有点击的dom元素，这个dom元素，被添加到了数组末尾
         const ball = this.dropBalls[this.dropBalls.length - 1]
         const rect = ball.el.getBoundingClientRect()//返回元素的位置和大小
@@ -198,74 +197,91 @@
       //点击content，显示购物列表，
       toggleList() {
         //也可以在这里创建一个标识，控制是否执行下面的代码
-        if (this.listFold) {//如果this.listFold为true，执行下面代码,也就是说true触发这个事件，false不触发这个事件
-          if (!this.totalCount) {
+        if (!this.listFold) {//如果this.listFold为false，执行下面代码
+          if (!this.totalCount) {//如果购物车列表信息为空，不显示cart-list
             return
+          }else{//如果购物车列表信息不为空，显示cart-list
+            this.listFold = true//
+            if(this.sticky===false){//this.sticky:判定是不是sticky组件
+              this._showShopCartList()//调用shop-cart-list组件列表
+              this._showShopCartSticky()
+            }
           }
-          this.listFold = false//
-          this._showShopCartList()//调用shop-cart-list组件列表
-          // this._showShopCartSticky()
+          console.log(111);
         } else {
-          this.listFold = true
+          console.log(222);
+          this.listFold = false
           this._hideShopCartList()
         }
       },
 
       //通过register控制组件是否显示（是否加载），register这个文件的语法是cube-ui特有的，后续一定要搞明白了
       //显示购物车列表，组件
-      _showShopCartList() {
+      _showShopCartList() {//调用cart-list组件api
         this.shopCartListComp = this.shopCartListComp || this.$createShopCartList({
           $props: {
             selectFoods: 'selectFoods'
           },
           $events: {
-            leave: () => {
-              // this._hideShopCartSticky()
-            },
+            //在这个标签上添加自定义事件，在子组件模板中可以通过this.$emit("hide")调用这个函数
             hide: () => {
-              this.listFold = true//通过组件的隐藏事件更改这个值为初始值，这样才可以重新触发点击事件
+              this.listFold = false//通过组件的隐藏事件更改这个值为初始值，这样才可以重新触发点击事件
+              // this._hideShopCartSticky()//动画结束之后隐藏sticky  在这里隐藏动画效果会有问题
             },
+            leave: () => {
+              console.log('leave');
+              this._hideShopCartSticky()//动画结束之后隐藏sticky
+              /*//快速点击购物车图标，会创建多个cart-list-sticky和shop-cart-list元素，为什么
+              //在上面hide执行此代码，就没有这个问题，但是会出现新的bug
+              //做一个限制，在原来的shop-cart中可以调用api，在shop-cart-sticky不能掉用*/
+            },
+
             add: (el) => {
-              // this.shopCartStickyComp.drop(el)
+              //执行小球动画
+              this.shopCartStickyComp.drop(el)
             }
           }
         });
-        this.shopCartListComp.show()
+        this.shopCartListComp.show()//显示这个组件
       },
-
       _hideShopCartList() {
-        // const list = this.sticky ? this.$parent.list : this.shopCartListComp
-        // list.hide && list.hide()
-
-        this.shopCartListComp.hide()
-
+        // this.sticky 这个数据是做什么的？？用来判断是不是shop-cart-sticky组件
+        const list = this.sticky ? this.$parent.list : this.shopCartListComp
+        //this.$parent代表什么？？
+        list.hide && list.hide()
+        // console.log(this);//shop-cart
+        // console.log(this.$parent);//shop-cart-sticky
       },
 
-      // _showShopCartSticky() {
-      //   this.shopCartStickyComp = this.shopCartStickyComp || this.$createShopCartSticky({
-      //     $props: {
-      //       selectFoods: 'selectFoods',
-      //       deliveryPrice: 'deliveryPrice',
-      //       minPrice: 'minPrice',
-      //       fold: 'listFold',
-      //       list: this.shopCartListComp
-      //     }
-      //   })
-      //   this.shopCartStickyComp.show()
-      // },
-      // _hideShopCartSticky() {
-      //   this.shopCartStickyComp.hide()
-      // }
+      _showShopCartSticky() {
+        this.shopCartStickyComp = this.shopCartStickyComp || this.$createShopCartSticky({
+          $props: {
+            selectFoods: 'selectFoods',
+            deliveryPrice: 'deliveryPrice',
+            minPrice: 'minPrice',
+            fold: 'listFold',
+            list: this.shopCartListComp,
+          }
+        })
+        this.shopCartStickyComp.show()
+      },
+      _hideShopCartSticky() {
+        this.shopCartStickyComp.hide()
+      }
     },
     watch: {
-      // fold(newVal) {
-      //   this.listFold = newVal
-      // },
-      // totalCount(count) {
-      //   if (!this.fold && count === 0) {
-      //     this._hideShopCartList()
-      //   }
-      // }
+      // 为什么要监听这个有什么用？？ 维护点击事件
+      //监听sticky中子组件shop-cart中的folo
+      fold(newVal) {
+        this.listFold = newVal
+      },
+
+      //监听totalCount，如果totalCount变为0，隐藏cart-list
+      totalCount(count) {
+        if (!this.fold && count === 0) {
+          this._hideShopCartList()
+        }
+      }
     },
     components: {
       Bubble
@@ -286,6 +302,7 @@
       color: $color-light-grey
       .content-left
         flex: 1
+        display flex
         .logo-wrapper
           display: inline-block
           vertical-align: top
@@ -330,12 +347,13 @@
             color: $color-white
         .desc
           display: inline-block
-          vertical-align: top
-          margin: 12px 0 0 12px
-          line-height: 24px
+          /*vertical-align: top*/
+          margin: 5px
+          word-break:break-all
+          line-height: 38px
           font-size: $fontsize-small-s
       .content-right
-        flex: 0 0 105px
+        /*flex: 0 0 105px*/
         width: 105px
         .pay
           height: 48px

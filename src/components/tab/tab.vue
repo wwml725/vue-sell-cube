@@ -27,7 +27,7 @@
         ref="slide">
         <cube-slide-item v-for="(tab,index) in tabs" :key="index">
           <!--<component ref="component" :is="tab.component" :data="tab.data"></component>-->
-          <component ref="component" :is="tab.component"></component>
+          <component ref="component" :is="tab.component" :data="tab.data"></component>
         </cube-slide-item>
       </cube-slide>
     </div>

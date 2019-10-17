@@ -30,7 +30,7 @@
                   <span>￥{{food.price*food.count}}</span>
                 </div>
                 <div class="cart-control-wrapper">
-                  <cart-control @add="onAdd" :food="food"></cart-control>
+                  <cart-control :food="food" @add="onAdd"></cart-control>
                 </div>
               </li>
             </ul>
@@ -45,9 +45,10 @@
   import CartControl from 'components/cart-control/cart-control'
   import popupMixin from 'common/mixins/popup'
 
-  const EVENT_SHOW = 'show'
-  const EVENT_ADD = 'add'
   const EVENT_LEAVE = 'leave'
+  const EVENT_ADD = 'add'
+  const EVENT_SHOW = 'show'
+
 
   export default {
     name: 'shop-cart-list',
@@ -60,6 +61,11 @@
         }
       }
     },
+    data(){
+      return {
+        visible:false
+      }
+    },
     created() {
       this.$on(EVENT_SHOW, () => {//？？？？？？？？？？？？？
         this.$nextTick(() => {
@@ -68,7 +74,8 @@
       })
     },
     methods: {
-      onAdd(target) {//t触发小球动画，就像是goods组件中一样
+      //小球动画
+      onAdd(target) {
         this.$emit(EVENT_ADD, target)
       },
       afterLeave() {
@@ -92,6 +99,7 @@
         })
         this.dialogComp.show()
       }
+
     },
     components: {
       CartControl
@@ -103,23 +111,30 @@
   @import "~common/stylus/variable"
   .cube-shop-cart-list
     bottom: 48px
+
     &.fade-enter, &.fade-leave-active
       opacity: 0
+
     &.fade-enter-active, &.fade-leave-active
       transition: all .3s ease-in-out
+
     .move-enter, .move-leave-active
       transform: translate3d(0, 100%, 0)
+
     .move-enter-active, .move-leave-active
       transition: all .3s ease-in-out
+
     .list-header
       height: 40px
       line-height: 40px
       padding: 0 18px
       background: $color-background-ssss
+
       .title
         float: left
         font-size: $fontsize-medium
         color: $color-dark-grey
+
       .empty
         float: right
         font-size: $fontsize-small
@@ -130,14 +145,17 @@
       max-height: 217px
       overflow: hidden
       background: $color-white
+
       .food
         position: relative
         padding: 12px 0
         box-sizing: border-box
+
         .name
           line-height: 24px
           font-size: $fontsize-medium
           color: $color-dark-grey
+
         .price
           position: absolute
           right: 90px
@@ -146,6 +164,7 @@
           font-weight: 700
           font-size: $fontsize-medium
           color: $color-red
+
         .cart-control-wrapper
           position: absolute
           right: 0

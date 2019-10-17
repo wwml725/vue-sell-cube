@@ -30,23 +30,23 @@
           {
             label: '商品',
             component: Goods,
-            // data: {
-            //   seller: this.seller
-            // }
+            data: {
+              seller: this.seller
+            }
           },
           {
             label: '评论',
             component: Ratings,
-            // data: {
-            //   seller: this.seller
-            // }
+            data: {
+              seller: this.seller
+            }
           },
           {
             label: '商家uuuu',
             component: Seller,
-            // data: {
-            //   seller: this.seller
-            // }
+            data: {
+              seller: this.seller
+            }
           }
         ]
       }

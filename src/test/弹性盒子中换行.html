@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    #app{
+      width: 100%;
+      height: 40px;
+      display: flex;
+      border: 1px solid black;
+      box-sizing: border-box;
+    }
+    .content-left{
+      flex: 1;
+      background: red;
+      height: 100%;
+    }
+    .content-left .item1{
+      display: inline-block;
+      height: 40px;
+      border-right: 1px solid darkblue;
+      flex: 1;
+      width: 50px;
+    }
+    .content-left .item2{
+      display: inline-block;
+      height: 40px;
+      word-break: break-all;
+      flex: 1;
+
+    }
+    .content-right{
+      flex: 0 0 105px;
+      width: 105px;
+      background: greenyellow;
+      text-align: center;
+      line-height: 40px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="content-left">
+    <div class="item1">购物车</div>
+    <div class="item2">100元</div>
+  </div>
+
+  <div class="content-right">
+    <div class="item1">去结算</div>
+  </div>
+</div>
+<script>
+
+</script>
+</body>
+</html>
