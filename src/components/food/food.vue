@@ -32,8 +32,36 @@
             <h1 class="title">商品信息</h1>
             <p class="text">{{food.info}}</p>
           </div>
+          <split></split>
           <div class="rating">
             <h1 class="title">商品评价</h1>
+            <rating-select
+              @select="onSelect"
+              @toggle="onToggle"
+              :selectType="selectType"
+              :onlyContent="onlyContent"
+              :desc="desc"
+              :ratings="ratings">
+            </rating-select>
+            <div class="rating-wrapper">
+              <ul v-show="computedRatings && computedRatings.length">
+                <li
+                  v-for="(rating,index) in computedRatings"
+                  class="rating-item border-bottom-1px"
+                  :key="index"
+                >
+                  <div class="user">
+                    <span class="name">{{rating.username}}</span>
+                    <img class="avatar" width="12" height="12" :src="rating.avatar">
+                  </div>
+                  <div class="time">{{format(rating.rateTime)}}</div>
+                  <p class="text">
+                    <span :class="{'icon-thumb_up':rating.rateType===0,'icon-thumb_down':rating.rateType===1}"></span>{{rating.text}}
+                  </p>
+                </li>
+              </ul>
+              <div class="no-rating" v-show="!computedRatings || !computedRatings.length">暂无评价</div>
+            </div>
           </div>
         </div>
       </cube-scroll>
@@ -42,11 +70,11 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // import moment from 'moment'
+  import moment from 'moment'
   import CartControl from 'components/cart-control/cart-control'
-  // import RatingSelect from 'components/rating-select/rating-select'
+  import RatingSelect from 'components/rating-select/rating-select'
   import Split from 'components/split/split'
-  // import ratingMixin from 'common/mixins/rating'
+  import ratingMixin from 'common/mixins/rating'
   import popupMixin from 'common/mixins/popup'
 
   const EVENT_SHOW = 'show'
@@ -55,7 +83,7 @@
 
   export default {
     name: 'food',
-    mixins: [popupMixin],
+    mixins: [popupMixin,ratingMixin],
     props: {
       food: {
         type: Object
@@ -64,10 +92,17 @@
 
     data() {
       return {
+        desc: {
+          all: '全部',
+          positive: '推荐',
+          negative: '吐槽'
+        }
       }
     },
     computed: {
-
+      ratings() {
+        return this.food.ratings
+      }
     },
     created() {
       this.$on(EVENT_SHOW, () => {
@@ -87,12 +122,15 @@
         this.$set(this.food, 'count', 1)
         this.$emit(EVENT_ADD, event.target)
       },
+      format(time) {
+        return moment(time).format('YYYY-MM-DD hh:mm')
+      }
 
 
     },
     components: {
       CartControl,
-      // RatingSelect,
+      RatingSelect,
       Split
     }
   }
