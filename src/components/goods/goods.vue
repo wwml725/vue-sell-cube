@@ -41,6 +41,7 @@
               v-for="food in good.foods"
               :key="food.name"
               class="food-item"
+              @click="selectFood(food)"
             >
               <div class="icon">
                 <img width="57" height="57" :src="food.icon">
@@ -73,6 +74,7 @@
         :delivery-price="seller.deliveryPrice"
         :min-price="seller.minPrice"></shop-cart>
     </div>
+    <!--<food :food="selectedFood" ref="food"></food>-->
   </div>
 </template>
 
@@ -80,7 +82,9 @@
   import {getGoods} from 'api'
   //引入的子组件
   import ShopCart from 'components/shop-cart/shop-cart'
-  import CartControl from 'components/cart-control/cart-control'
+   import CartControl from 'components/cart-control/cart-control'
+  // import Food from 'components/food/food'
+
   import SupportIco from 'components/support-ico/support-ico'
   import Bubble from 'components/bubble/bubble'
 
@@ -126,7 +130,6 @@
         })
         return ret
       },
-
       //被添加值购物车的食品信息
       //selectFoods就是：食品信息中count>0,将食品放进这个对象中、
       //将这个数据，放到购物车组件的中的购物车组件，在组建中获取食品数量
@@ -143,6 +146,28 @@
       },
     },
     methods: {
+      selectFood(food) {
+        this.selectedFood = food
+        // this.$refs.food.show()
+        this._showFood()
+        this._showShopCartSticky()
+      },
+      _showFood() {
+        this.foodComp = this.foodComp || this.$createFood({
+          $props: {
+            food: 'selectedFood'
+          },
+          $events: {
+            add: (target) => {
+              this.shopCartStickyComp.drop(target)
+            },
+            leave: () => {
+              this._hideShopCartSticky()
+            }
+          }
+        })
+        this.foodComp.show()
+      },
       fetch() {
         //获取商品信息，在这里获取商品信息，然后从这里传送给这里的子组件
         getGoods().then((goods) => {
@@ -153,12 +178,33 @@
         // console.log("onAdd");
         this.$refs.shopCart.drop(target)//驱动shop-cart组件中的小球下坠动画
       },
+
+      _showShopCartSticky() {
+        this.shopCartStickyComp = this.shopCartStickyComp || this.$createShopCartSticky({
+          $props: {
+            selectFoods: 'selectFoods',
+            deliveryPrice: this.seller.deliveryPrice,
+            minPrice: this.seller.minPrice,
+            fold: false,
+            sticky:false
+      }
+        })
+        this.shopCartStickyComp.show()
+      },
+      _hideShopCartSticky() {
+        this.shopCartStickyComp.hide()
+      }
+
+
+
     },
+
     components: {
       Bubble,
       SupportIco,
       ShopCart,
-      CartControl
+      CartControl,
+      // Food
     }
   }
 </script>

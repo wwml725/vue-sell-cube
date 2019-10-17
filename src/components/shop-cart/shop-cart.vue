@@ -13,7 +13,7 @@
           <div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
           <p class="desc">另需配送费￥{{deliveryPrice}}元</p>
         </div>
-        <div class="content-right">
+        <div class="content-right" @click="pay">
           <div class="pay" :class="payClass">
             {{payDesc}}
           </div>
@@ -70,7 +70,7 @@
         type: Number,
         default: 0
       },
-      sticky: {
+      sticky: { // this.sticky 这个数据是做什么的？？用来判断是不是shop-cart-sticky组件
         type: Boolean,
         default: false
       },
@@ -128,17 +128,16 @@
       }
     },
     methods: {
-      // pay(e) {
-      //   if (this.totalPrice < this.minPrice) {
-      //     return
-      //   }
-      //   this.$createDialog({
-      //     title: '支付',
-      //     content: `您需要支付${this.totalPrice}元`
-      //   }).show()
-      //   e.stopPropagation()
-      // },
-
+      pay(e) {
+        if (this.totalPrice < this.minPrice) {
+          return
+        }
+        this.$createDialog({
+          title: '支付',
+          content: `您需要支付${this.totalPrice}元`
+        }).show()
+        e.stopPropagation()
+      },
       //小球的动画效果,动画时间是怎么控制的
       drop(el) {//el代表点击的dom元素，在函数执行的时候传参数
         // console.log(el);
@@ -157,7 +156,6 @@
           }
         }
       },
-
       beforeDrop(el) {
         //找到动画元素，也就是小球的“动画起始位置”
         // console.log("beforeDrop");
@@ -173,7 +171,6 @@
         const inner = el.getElementsByClassName(innerClsHook)[0]
         inner.style.transform = inner.style.webkitTransform = `translate3d(${x}px,0,0)`
       },
-
       dropping(el, done) {
         //移动到一个位置之后才执行动画，必须要进行重绘。在JS知识点中完成相关实例
         this._reflow = document.body.offsetHeight//触发浏览器的重绘，为什么要重绘？？有什么作用？
@@ -183,7 +180,6 @@
         inner.style.transform = inner.style.webkitTransform = `translate3d(0,0,0)`
         el.addEventListener('transitionend', done)//有什么作用
       },
-
       afterDrop(el) {
         const ball = this.dropBalls.shift()//动画执行完毕后删除dropBalls第一项
         /*这个ball是dropBalls中的show，为什么会改变balls中的ball.show？？？？？？？？？？
@@ -193,7 +189,6 @@
           el.style.display = 'none'
         }
       },
-
       //点击content，显示购物列表，
       toggleList() {
         //也可以在这里创建一个标识，控制是否执行下面的代码
@@ -207,9 +202,8 @@
               this._showShopCartSticky()
             }
           }
-          console.log(111);
         } else {
-          console.log(222);
+          // console.log(222);
           this.listFold = false
           this._hideShopCartList()
         }
@@ -218,6 +212,7 @@
       //通过register控制组件是否显示（是否加载），register这个文件的语法是cube-ui特有的，后续一定要搞明白了
       //显示购物车列表，组件
       _showShopCartList() {//调用cart-list组件api
+        console.log(1);
         this.shopCartListComp = this.shopCartListComp || this.$createShopCartList({
           $props: {
             selectFoods: 'selectFoods'
@@ -245,12 +240,12 @@
         this.shopCartListComp.show()//显示这个组件
       },
       _hideShopCartList() {
-        // this.sticky 这个数据是做什么的？？用来判断是不是shop-cart-sticky组件
         const list = this.sticky ? this.$parent.list : this.shopCartListComp
         //this.$parent代表什么？？
         list.hide && list.hide()
         // console.log(this);//shop-cart
         // console.log(this.$parent);//shop-cart-sticky
+        console.log(2);
       },
 
       _showShopCartSticky() {
@@ -260,6 +255,7 @@
             deliveryPrice: 'deliveryPrice',
             minPrice: 'minPrice',
             fold: 'listFold',
+            sticky: true,
             list: this.shopCartListComp,
           }
         })
@@ -278,7 +274,7 @@
 
       //监听totalCount，如果totalCount变为0，隐藏cart-list
       totalCount(count) {
-        if (!this.fold && count === 0) {
+        if (this.fold && count === 0) {
           this._hideShopCartList()
         }
       }

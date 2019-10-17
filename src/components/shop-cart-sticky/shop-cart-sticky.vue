@@ -6,7 +6,7 @@
         :deliveryPrice="deliveryPrice"
         :minPrice="minPrice"
         :fold="fold"
-        :sticky=true
+        :sticky="sticky"
       >
       </shop-cart>
     </div>
@@ -35,6 +35,10 @@
         default: 0
       },
       fold: {
+        type: Boolean,
+        default: false
+      },
+      sticky: {
         type: Boolean,
         default: false
       },
