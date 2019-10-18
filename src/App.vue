@@ -1,6 +1,6 @@
 <template>
   <div id="app" @touchmove.prevent>
-    <v-header :seller = 'seller'></v-header>
+    <v-header :seller="seller"></v-header>
     <div class="tab-wrapper">
       <tab :tabs="tabs"></tab>
     </div>
@@ -8,20 +8,20 @@
 </template>
 
 <script>
-  import VHeader from 'components/v-header/v-header'
-  //获取卖家信息的接口
+  import qs from 'query-string'
   import { getSeller } from 'api'
-  import Tab from 'components/tab/tab'
-
+  import VHeader from 'components/v-header/v-header'
   import Goods from 'components/goods/goods'
   import Ratings from 'components/ratings/ratings'
   import Seller from 'components/seller/seller'
-
+  import Tab from 'components/tab/tab'
 
   export default {
-    data () {
+    data() {
       return {
-        seller: {}
+        seller: {
+          id: qs.parse(location.search).id
+        }
       }
     },
     computed: {
@@ -35,14 +35,14 @@
             }
           },
           {
-            label: '评论',
+            label: '评论11111111111',
             component: Ratings,
             data: {
               seller: this.seller
             }
           },
           {
-            label: '商家uuuu',
+            label: '商家',
             component: Seller,
             data: {
               seller: this.seller
@@ -50,24 +50,22 @@
           }
         ]
       }
-
     },
-    created () {
+    created() {
       this._getSeller()
     },
     methods: {
-      //获取卖家信息
-      _getSeller () {
-        getSeller().then((seller)=>{
-          this.seller = seller
+      _getSeller() {
+        getSeller({
+          id: this.seller.id
+        }).then((seller) => {
+          this.seller = Object.assign({}, this.seller, seller)
         })
       }
     },
     components: {
-      VHeader,
       Tab,
-      Goods, Ratings, Seller
-
+      VHeader
     }
   }
 </script>
