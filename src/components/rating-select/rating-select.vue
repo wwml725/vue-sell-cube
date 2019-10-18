@@ -51,14 +51,15 @@
       }
     },
     computed: {
+      //说白了就是，将所有的评价根据要求进行过滤
       positives() {
         return this.ratings.filter((rating) => {
-          return rating.rateType === POSITIVE
+          return rating.rateType === POSITIVE//0
         })
       },
       negatives() {
         return this.ratings.filter((rating) => {
-          return rating.rateType === NEGATIVE
+          return rating.rateType === NEGATIVE//1   All代表2
         })
       }
     },
